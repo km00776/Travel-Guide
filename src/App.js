@@ -4,10 +4,13 @@ import List from './components/List/List';
 import Map from './components/Map/Map';
 import {CssBaseline, Grid} from '@material-ui/core';
 import {getPlacesData} from './api';
+import { useDispatch, useSelector } from 'react-redux';
+import {setLocation} from './redux/actions/locationActions';
+
 
 const App = () => {
   const [places, setPlaces] = useState([]);
-  const [coordinates, setCoordinates] = useState({});
+  // const [coordinates, setCoordinates] = useState({});
   const [bounds, setBounds] = useState(null);
   const [childClicked, setChildClicked] = useState (null);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +19,8 @@ const App = () => {
   const [filteredPlaces, setFilteredPlaces] = useState([]);
  const [autocomplete, setAutocomplete] = useState (null);
 
+ const dispatch = useDispatch();
+const coordinates = useSelector (state => state.location.location);
 
 
 
@@ -24,7 +29,7 @@ const App = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(({ coords: {latitude, longitude}}) => {
-      setCoordinates({lat: latitude, lng: longitude});
+      dispatch(setLocation({lat: latitude, lng: longitude}));
     })
   }, [])
 
@@ -63,7 +68,7 @@ const onPlaceChanged = () => {
   const lat = autocomplete.getPlace ().geometry.location.lat ();
   const lng = autocomplete.getPlace ().geometry.location.lng ();
 
-  setCoordinates ({lat, lng});
+  dispatch(setLocation ({lat, lng}));
 };
 
 
@@ -87,7 +92,7 @@ const onPlaceChanged = () => {
               />
           </Grid> 
           <Grid item xs={12} md={4}>
-              <Map setBounds = {setBounds} coordinates = {coordinates} setCoordinates={setCoordinates} places = {filteredPlaces.length ? filteredPlaces : places } setChildClicked={setChildClicked} />
+              <Map setBounds = {setBounds} coordinates = {coordinates}  places = {filteredPlaces.length ? filteredPlaces : places } setChildClicked={setChildClicked} />
           </Grid> 
       </Grid>
     </>
