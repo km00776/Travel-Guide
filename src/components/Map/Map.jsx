@@ -5,10 +5,14 @@ import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import Rating from '@material-ui/lab/Rating';
 import useStyles from './styles';
 import { PlaceSharp } from '@material-ui/icons';
-
-const Map = ({places, setChildClicked, setCoordinates, setBounds, coordinates}) => {
+import {useDispatch, useSelector} from 'react-redux';
+import { setLocation } from '../../redux/actions/locationActions';
+const Map = ({places, setChildClicked, setBounds}) => {
   const classes = useStyles ();
   const isDesktop = useMediaQuery ('(min-width:600px)');
+
+  const dispatch = useDispatch();
+  const coordinates = useSelector((state) => state.location.location)
   return (
     <div className={classes.mapContainer}>
       <GoogleMapReact
@@ -19,7 +23,8 @@ const Map = ({places, setChildClicked, setCoordinates, setBounds, coordinates}) 
         margin={[50, 50, 50, 50]}
         options={''}
         onChange={(e) => { 
-          setCoordinates({lat: e.center.lat, lng: e.center.lng})
+          dispatch(setLocation({lat: e.center.lat, lng: e.center.lng}))
+          // setCoordinates({lat: e.center.lat, lng: e.center.lng})
           setBounds({ne: e.marginBounds.ne, sw: e.marginBounds.sw}) 
           console.log(e.marginBounds.ne);
         }}
